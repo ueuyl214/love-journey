@@ -337,14 +337,23 @@
     const memory = memories[index];
     const chapter = chapterMap.get(memory.chapter);
     state.modalIndex = index;
-    els.lightboxImage.src = memory.src;
+    els.lightboxImage.src = memory.thumb;
     els.lightboxImage.alt = memory.title;
+    els.lightboxImage.decoding = "async";
     els.lightboxTitle.textContent = memory.title;
     els.lightboxMeta.textContent = `${chapter ? chapter.title : ""} · ${memory.series}`;
     if (!els.lightbox.open) {
       els.lightbox.showModal();
     }
     document.body.classList.add("modal-open");
+
+    const fullImage = new Image();
+    fullImage.onload = () => {
+      if (state.modalIndex === index) {
+        els.lightboxImage.src = memory.src;
+      }
+    };
+    fullImage.src = memory.src;
   }
 
   function closeLightbox() {
