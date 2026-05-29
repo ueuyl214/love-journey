@@ -679,11 +679,16 @@ a {
 }
 
 .media-copy {
+  position: relative;
+  z-index: 2;
   min-width: 0;
 }
 
 .media-link {
+  position: relative;
+  z-index: 3;
   margin-top: 18px;
+  touch-action: manipulation;
 }
 
 .file-name {
@@ -699,6 +704,7 @@ a {
 .album-stack {
   position: relative;
   min-height: 470px;
+  pointer-events: none;
 }
 
 .album-card {
