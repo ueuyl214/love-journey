@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>从 2022.10.07 开始</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='50' font-size='46'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="gate" id="gate">
+    <div class="gate__panel">
+      <p class="eyebrow">OUR JOURNEY</p>
+      <h1 id="gate-title">准备好回到 2022.10.07 了吗</h1>
+      <p class="gate__text">这里放着我们一起走过的瞬间，慢慢看，别急着翻到最后。</p>
+      <button class="primary-button" id="enterButton" type="button">开始这段旅程</button>
+    </div>
+    <div class="gate__date" aria-hidden="true">2022.10.07</div>
+  </div>
+
+  <main class="app" id="app" hidden>
+    <section class="hero" id="top">
+      <div class="hero__collage" id="heroCollage" aria-hidden="true"></div>
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="hero__copy">
+        <p class="eyebrow">SINCE</p>
+        <h2>2022.10.07</h2>
+        <p class="hero__line">那天以后，很多第一次、很多赶路、很多小小的日常，都有了同一个名字。</p>
+        <div class="counter" id="counter">正在计算我们在一起的时间...</div>
+        <div class="hero__stats" id="heroStats"></div>
+      </div>
+    </section>
+
+    <section class="section story-map" id="storyMap">
+      <div class="section__heading">
+        <p class="eyebrow">MEMORY MAP</p>
+        <h2>记忆星图</h2>
+        <p>我把相近的照片放在同一段回忆里，让它们像一条路一样连起来。</p>
+      </div>
+
+      <div class="map-layout">
+        <nav class="chapter-nav" id="chapterNav" aria-label="记忆章节"></nav>
+        <article class="spotlight" id="chapterSpotlight"></article>
+      </div>
+    </section>
+
+    <section class="section series-section">
+      <div class="section__heading">
+        <p class="eyebrow">CLOSE MOMENTS</p>
+        <h2>一段一段靠近</h2>
+        <p>同一个地方、同一次出发、同一种笑法，会在这里挨在一起。</p>
+      </div>
+      <div class="series-shelves" id="seriesShelves"></div>
+    </section>
+
+    <section class="section gallery-section" id="memories">
+      <div class="gallery-top">
+        <div>
+          <p class="eyebrow">ALL PHOTOS</p>
+          <h2>很多个瞬间</h2>
+          <p id="galleryIntro">所有照片都在这里。</p>
+        </div>
+        <button class="secondary-button" id="randomButton" type="button">抽一张今天的回忆</button>
+      </div>
+      <div class="filter-tabs" id="filterTabs" aria-label="照片筛选"></div>
+      <div class="memory-grid" id="memoryGrid"></div>
+    </section>
+
+    <section class="section media-section" id="albumSection">
+      <div class="media-copy">
+        <p class="eyebrow">3D ALBUM</p>
+        <h2>把照片变成一场小电影</h2>
+        <p>这里已经接上你的 3D 浪漫相册。点开后会进入独立的全屏相册页面，照片、音乐和动画都在那里展开。</p>
+        <a class="primary-button media-link" href="album/index.html">打开 3D 相册</a>
+      </div>
+      <div class="album-stack" id="albumStack" aria-hidden="true"></div>
+    </section>
+
+    <section class="section song-section" id="songSection">
+      <div class="song-stage">
+        <div class="song-copy">
+          <p class="eyebrow">A SONG FOR YOU</p>
+          <h2>一首还没正式唱给你的歌</h2>
+          <p>伴奏可以放在同一目录下，文件名用 <span class="file-name">accompaniment.mp3</span>。到那天，网页负责开场，歌由你亲自唱完。</p>
+        </div>
+        <div class="player-panel">
+          <div class="lyric-line" id="lyricLine">等伴奏响起，这里会一行一行亮起来。</div>
+          <audio id="songPlayer" controls preload="metadata">
+          </audio>
+        </div>
+      </div>
+    </section>
+
+    <section class="flower-room" id="flowerRoom">
+      <div class="flower-room__copy">
+        <p class="eyebrow">ONE FLOWER</p>
+        <h2>还差一束正式的花</h2>
+        <p>把这朵花送到屏幕边缘，剩下的话我想当面说。</p>
+      </div>
+      <div class="edge-target" aria-hidden="true"></div>
+      <div class="rose" id="flower" role="button" tabindex="0" aria-label="把花送出去">
+        <span class="rose__bloom">
+          <span class="rose__petal rose__petal--one"></span>
+          <span class="rose__petal rose__petal--two"></span>
+          <span class="rose__petal rose__petal--three"></span>
+          <span class="rose__petal rose__petal--four"></span>
+          <span class="rose__center"></span>
+        </span>
+        <span class="rose__stem"></span>
+        <span class="rose__leaf rose__leaf--left"></span>
+        <span class="rose__leaf rose__leaf--right"></span>
+      </div>
+    </section>
+  </main>
+
+  <section class="final-screen" id="finalScreen" aria-hidden="true">
+    <p class="eyebrow">FROM 2022.10.07 TO TOMORROW</p>
+    <h2>我喜欢你</h2>
+    <p>可以和我继续这段旅程吗？</p>
+    <button class="secondary-button final-again" id="againButton" type="button">再看一遍</button>
+  </section>
+
+  <dialog class="lightbox" id="lightbox">
+    <button class="lightbox__close" id="closeLightbox" type="button" aria-label="关闭照片">×</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="prevMemory" type="button" aria-label="上一张">‹</button>
+    <figure>
+      <img id="lightboxImage" alt="">
+      <figcaption>
+        <strong id="lightboxTitle"></strong>
+        <span id="lightboxMeta"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" id="nextMemory" type="button" aria-label="下一张">›</button>
+  </dialog>
+
+  <script src="assets/memories.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
