@@ -8,6 +8,44 @@
     "后面的旅程，也想继续和你一起"
   ];
 
+  const FINAL_LYRICS = [
+    { section: "Verse 1", text: "你总害怕自己不行 偶尔偷偷地叹气" },
+    { text: "总觉得做得不够好 一个人默默委屈" },
+    { text: "但在我的心里 知道你一直都是最棒的" },
+    { text: "每次我都相信你 你的存在就是满分题" },
+    { section: "Pre-Chorus", text: "记得一千天纪念的那个秘密" },
+    { text: "你把酒店房间 藏满了浪漫的痕迹" },
+    { text: "而我像个呆子 挂着相机拎着一大袋礼物" },
+    { text: "只想把这心动 一帧一帧存进内存里" },
+    { section: "Chorus", text: "你是我心里永远 最闪耀的那个“小白”" },
+    { text: "我是永远陪着你 逗你笑的“小鸡毛”" },
+    { text: "一千三百四十天 每天都是热恋的步调" },
+    { text: "你不知道你发光的样子 究竟有多么的好" },
+    { text: "别再偷偷没自信啦 我的女孩" },
+    { text: "你已经把全宇宙的可爱 都统统承包" },
+    { section: "Rap", text: "回忆那次考完试 剧情走向实在太搞笑" },
+    { text: "你想给我惊喜 偷偷在地铁站门口守着通道" },
+    { text: "我也想给你惊喜 故意发消息说“哎呀还没到”" },
+    { text: "结果我一顿操作 直接奔向了酒店的转角" },
+    { text: "你问我怎么不在 我问你跑去了哪条街道" },
+    { text: "我们在两个坐标 玩着双向奔赴的捉迷藏" },
+    { text: "就算完美错过 也是只有我们懂的甜度频道" },
+    { section: "Bridge", text: "你总是把我照顾得 无微不至刚刚好" },
+    { text: "而我也想做你 遮风挡雨的外套" },
+    { text: "就算未来偶尔会有 想要退缩的烦恼" },
+    { text: "别怕 把你的那些小自卑 通通都上交" },
+    { section: "Guitar Solo", text: "吉他 Solo 过渡" },
+    { section: "Chorus", text: "你是我心里永远 最闪耀的那个“小白”" },
+    { text: "我是永远陪着你 逗你笑的“小鸡毛”" },
+    { text: "一千三百四十天 每天都是热恋的步调" },
+    { text: "你不知道你发光的样子 究竟有多么的好" },
+    { text: "别再偷偷没自信啦 我的女孩" },
+    { text: "你在我心里的 C 位 永远替换不掉" },
+    { section: "Outro", text: "三年多 只是个美好的起跑" },
+    { text: "牵着线条小狗 我们接着闹" },
+    { text: "小白和小鸡毛 永远刚刚好" }
+  ];
+
   const chapters = window.MEMORY_CHAPTERS || [];
   const memories = window.MEMORIES || [];
   const chapterMap = new Map(chapters.map((chapter) => [chapter.key, chapter]));
@@ -17,6 +55,7 @@
     activeChapter: chapters[0] ? chapters[0].key : "all",
     modalIndex: 0,
     lyricTimer: null,
+    finalLyricIndex: -1,
     finalShown: false
   };
 
@@ -58,6 +97,11 @@
       "lyricLine",
       "flower",
       "finalScreen",
+      "finalSongPlayer",
+      "finalPlayButton",
+      "finalSongProgress",
+      "finalSongTime",
+      "lyricsList",
       "againButton",
       "lightbox",
       "lightboxImage",
@@ -89,10 +133,13 @@
       }
     });
     document.addEventListener("keydown", handleKeyboard);
+    renderFinalLyrics();
     bindSong();
+    bindFinalPlayer();
     bindFlower();
     els.againButton.addEventListener("click", () => {
       state.finalShown = false;
+      stopFinalSong();
       els.finalScreen.classList.remove("is-visible");
       els.finalScreen.setAttribute("aria-hidden", "true");
       document.body.classList.remove("final-open");
@@ -375,7 +422,6 @@
   }
 
   function bindSong() {
-    loadOptionalSong();
     els.songPlayer.addEventListener("play", () => {
       let index = 0;
       els.lyricLine.textContent = LYRICS[index];
@@ -388,23 +434,98 @@
     els.songPlayer.addEventListener("pause", () => window.clearInterval(state.lyricTimer));
     els.songPlayer.addEventListener("ended", () => window.clearInterval(state.lyricTimer));
     els.songPlayer.addEventListener("error", () => {
-      els.lyricLine.textContent = "伴奏文件放进来以后，这里会跟着亮起来。";
+      els.lyricLine.textContent = "最后一页会把歌词慢慢唱出来。";
     });
   }
 
-  async function loadOptionalSong() {
-    try {
-      const response = await fetch("accompaniment.mp3", { method: "HEAD", cache: "no-store" });
-      if (!response.ok) return;
+  function renderFinalLyrics() {
+    els.lyricsList.innerHTML = FINAL_LYRICS
+      .map((line, index) => `
+        <li class="lyrics-item" data-lyric-index="${index}">
+          ${line.section ? `<span>${escapeHtml(line.section)}</span>` : ""}
+          <strong>${escapeHtml(line.text)}</strong>
+        </li>
+      `)
+      .join("");
+  }
 
-      const source = document.createElement("source");
-      source.src = "accompaniment.mp3";
-      source.type = "audio/mpeg";
-      els.songPlayer.appendChild(source);
-      els.songPlayer.load();
-    } catch (error) {
-      els.lyricLine.textContent = "伴奏文件放进来以后，这里会跟着亮起来。";
+  function bindFinalPlayer() {
+    els.finalPlayButton.addEventListener("click", () => {
+      if (els.finalSongPlayer.paused) {
+        playFinalSong(false);
+      } else {
+        els.finalSongPlayer.pause();
+      }
+    });
+
+    els.finalSongPlayer.addEventListener("loadedmetadata", updateFinalPlayer);
+    els.finalSongPlayer.addEventListener("timeupdate", updateFinalPlayer);
+    els.finalSongPlayer.addEventListener("play", () => {
+      els.finalPlayButton.textContent = "暂停";
+    });
+    els.finalSongPlayer.addEventListener("pause", () => {
+      els.finalPlayButton.textContent = "播放";
+    });
+    els.finalSongPlayer.addEventListener("ended", () => {
+      els.finalPlayButton.textContent = "再听一遍";
+      setActiveLyric(FINAL_LYRICS.length - 1);
+    });
+  }
+
+  function playFinalSong(fromStart) {
+    if (fromStart) {
+      els.finalSongPlayer.currentTime = 0;
+      state.finalLyricIndex = -1;
+      setActiveLyric(0);
     }
+
+    els.finalSongPlayer.volume = 0.86;
+    const playPromise = els.finalSongPlayer.play();
+    if (playPromise) {
+      playPromise.catch(() => {
+        els.finalPlayButton.textContent = "播放这首歌";
+      });
+    }
+  }
+
+  function stopFinalSong() {
+    els.finalSongPlayer.pause();
+    els.finalSongPlayer.currentTime = 0;
+    state.finalLyricIndex = -1;
+    setActiveLyric(0);
+    updateFinalPlayer();
+  }
+
+  function updateFinalPlayer() {
+    const duration = Number.isFinite(els.finalSongPlayer.duration) ? els.finalSongPlayer.duration : FINAL_LYRICS.length * 5.4;
+    const current = els.finalSongPlayer.currentTime || 0;
+    const progress = duration ? Math.min(1, current / duration) : 0;
+    els.finalSongProgress.style.width = `${progress * 100}%`;
+    els.finalSongTime.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+
+    const lyricIndex = Math.min(FINAL_LYRICS.length - 1, Math.floor(progress * FINAL_LYRICS.length));
+    setActiveLyric(lyricIndex);
+  }
+
+  function setActiveLyric(index) {
+    if (index === state.finalLyricIndex) return;
+    state.finalLyricIndex = index;
+    const items = Array.from(els.lyricsList.querySelectorAll(".lyrics-item"));
+    items.forEach((item, itemIndex) => {
+      item.classList.toggle("is-active", itemIndex === index);
+      item.classList.toggle("is-past", itemIndex < index);
+    });
+    const active = items[index];
+    if (active) {
+      active.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }
+
+  function formatTime(value) {
+    const totalSeconds = Math.max(0, Math.floor(value || 0));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${pad(minutes)}:${pad(seconds)}`;
   }
 
   function bindFlower() {
@@ -458,6 +579,7 @@
     els.finalScreen.classList.add("is-visible");
     els.finalScreen.setAttribute("aria-hidden", "false");
     document.body.classList.add("final-open");
+    playFinalSong(true);
     burstHearts();
   }
 

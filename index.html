@@ -81,12 +81,12 @@
       <div class="song-stage">
         <div class="song-copy">
           <p class="eyebrow">A SONG FOR YOU</p>
-          <h2>一首还没正式唱给你的歌</h2>
-          <p>伴奏可以放在同一目录下，文件名用 <span class="file-name">accompaniment.mp3</span>。到那天，网页负责开场，歌由你亲自唱完。</p>
+          <h2>一首藏在最后的歌</h2>
+          <p>等那朵花送出去以后，这首歌会正式响起。它不是插在网页里的背景音乐，是我认真写给你的答案。</p>
         </div>
         <div class="player-panel">
-          <div class="lyric-line" id="lyricLine">等伴奏响起，这里会一行一行亮起来。</div>
-          <audio id="songPlayer" controls preload="metadata">
+          <div class="lyric-line" id="lyricLine">最后一页会把歌词慢慢唱出来。</div>
+          <audio id="songPlayer" preload="metadata" hidden>
           </audio>
         </div>
       </div>
@@ -114,10 +114,32 @@
     </section>
   </main>
 
-  <section class="final-screen" id="finalScreen" aria-hidden="true">
-    <p class="eyebrow">FROM 2022.10.07 TO TOMORROW</p>
-    <h2>我喜欢你</h2>
-    <p>可以和我继续这段旅程吗？</p>
+  <section class="final-screen music-screen" id="finalScreen" aria-hidden="true">
+    <div class="music-hero">
+      <figure class="music-cover">
+        <img src="assets/song-cover.jpg" alt="小白和小鸡毛的封面">
+      </figure>
+
+      <div class="music-info">
+        <p class="eyebrow">MY FULL SCORE</p>
+        <h2>我的满分题</h2>
+        <p>小白和小鸡毛，永远刚刚好。</p>
+
+        <div class="music-player">
+          <button class="play-button" id="finalPlayButton" type="button">播放</button>
+          <div class="music-progress" aria-hidden="true">
+            <span id="finalSongProgress"></span>
+          </div>
+          <span class="music-time" id="finalSongTime">00:00 / 00:00</span>
+          <audio id="finalSongPlayer" src="assets/my-full-score-song.mp3" preload="auto"></audio>
+        </div>
+      </div>
+    </div>
+
+    <div class="lyrics-panel" aria-label="歌词">
+      <ol class="lyrics-list" id="lyricsList"></ol>
+    </div>
+
     <button class="secondary-button final-again" id="againButton" type="button">再看一遍</button>
   </section>
 
