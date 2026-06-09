@@ -1,13 +1,5 @@
 (function () {
   const START_DATE = new Date("2022-10-07T00:00:00+08:00");
-  const LYRICS = [
-    "从 2022.10.07 那天开始",
-    "我把很多普通的日子记成了纪念日",
-    "路很长，但我一直想走向你",
-    "欠你的那束花，我会亲手补上",
-    "后面的旅程，也想继续和你一起"
-  ];
-
   const FINAL_LYRICS = [
     { section: "Verse 1", text: "你总害怕自己不行 偶尔偷偷地叹气" },
     { text: "总觉得做得不够好 一个人默默委屈" },
@@ -54,7 +46,6 @@
     activeFilter: "all",
     activeChapter: chapters[0] ? chapters[0].key : "all",
     modalIndex: 0,
-    lyricTimer: null,
     finalLyricIndex: -1,
     finalShown: false
   };
@@ -93,8 +84,6 @@
       "galleryIntro",
       "randomButton",
       "albumStack",
-      "songPlayer",
-      "lyricLine",
       "flower",
       "finalScreen",
       "finalSongPlayer",
@@ -134,7 +123,6 @@
     });
     document.addEventListener("keydown", handleKeyboard);
     renderFinalLyrics();
-    bindSong();
     bindFinalPlayer();
     bindFlower();
     els.againButton.addEventListener("click", () => {
@@ -419,23 +407,6 @@
       if (event.key === "ArrowLeft") shiftLightbox(-1);
       if (event.key === "ArrowRight") shiftLightbox(1);
     }
-  }
-
-  function bindSong() {
-    els.songPlayer.addEventListener("play", () => {
-      let index = 0;
-      els.lyricLine.textContent = LYRICS[index];
-      window.clearInterval(state.lyricTimer);
-      state.lyricTimer = window.setInterval(() => {
-        index = (index + 1) % LYRICS.length;
-        els.lyricLine.textContent = LYRICS[index];
-      }, 4400);
-    });
-    els.songPlayer.addEventListener("pause", () => window.clearInterval(state.lyricTimer));
-    els.songPlayer.addEventListener("ended", () => window.clearInterval(state.lyricTimer));
-    els.songPlayer.addEventListener("error", () => {
-      els.lyricLine.textContent = "最后一页会把歌词慢慢唱出来。";
-    });
   }
 
   function renderFinalLyrics() {
