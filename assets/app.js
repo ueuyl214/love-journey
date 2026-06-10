@@ -1,42 +1,44 @@
 (function () {
   const START_DATE = new Date("2022-10-07T00:00:00+08:00");
-  const FINAL_LYRICS = [
-    { section: "Verse 1", text: "你总害怕自己不行 偶尔偷偷地叹气" },
-    { text: "总觉得做得不够好 一个人默默委屈" },
-    { text: "但在我的心里 知道你一直都是最棒的" },
-    { text: "每次我都相信你 你的存在就是满分题" },
-    { section: "Pre-Chorus", text: "记得一千天纪念的那个秘密" },
-    { text: "你把酒店房间 藏满了浪漫的痕迹" },
-    { text: "而我像个呆子 挂着相机拎着一大袋礼物" },
-    { text: "只想把这心动 一帧一帧存进内存里" },
-    { section: "Chorus", text: "你是我心里永远 最闪耀的那个“小白”" },
-    { text: "我是永远陪着你 逗你笑的“小鸡毛”" },
-    { text: "一千三百四十天 每天都是热恋的步调" },
-    { text: "你不知道你发光的样子 究竟有多么的好" },
-    { text: "别再偷偷没自信啦 我的女孩" },
-    { text: "你已经把全宇宙的可爱 都统统承包" },
-    { section: "Rap", text: "回忆那次考完试 剧情走向实在太搞笑" },
-    { text: "你想给我惊喜 偷偷在地铁站门口守着通道" },
-    { text: "我也想给你惊喜 故意发消息说“哎呀还没到”" },
-    { text: "结果我一顿操作 直接奔向了酒店的转角" },
-    { text: "你问我怎么不在 我问你跑去了哪条街道" },
-    { text: "我们在两个坐标 玩着双向奔赴的捉迷藏" },
-    { text: "就算完美错过 也是只有我们懂的甜度频道" },
-    { section: "Bridge", text: "你总是把我照顾得 无微不至刚刚好" },
-    { text: "而我也想做你 遮风挡雨的外套" },
-    { text: "就算未来偶尔会有 想要退缩的烦恼" },
-    { text: "别怕 把你的那些小自卑 通通都上交" },
-    { section: "Guitar Solo", text: "吉他 Solo 过渡" },
-    { section: "Chorus", text: "你是我心里永远 最闪耀的那个“小白”" },
-    { text: "我是永远陪着你 逗你笑的“小鸡毛”" },
-    { text: "一千三百四十天 每天都是热恋的步调" },
-    { text: "你不知道你发光的样子 究竟有多么的好" },
-    { text: "别再偷偷没自信啦 我的女孩" },
-    { text: "你在我心里的 C 位 永远替换不掉" },
-    { section: "Outro", text: "三年多 只是个美好的起跑" },
-    { text: "牵着线条小狗 我们接着闹" },
-    { text: "小白和小鸡毛 永远刚刚好" }
-  ];
+  const LYRIC_SYNC_OFFSET = 0.12;
+  const FINAL_LRC = `
+[00:00.00] 《我的满分题》
+[00:08.20] 你总害怕自己不行 偶尔偷偷地叹气
+[00:12.80] 总觉得做得不够好 一个人默默委屈
+[00:16.80] 但在我的心里 知道你一直都是最棒的
+[00:21.00] 每次我都相信你 你的存在就是满分题
+[00:25.80] 记得一千天纪念的那个秘密
+[00:30.00] 你把酒店房间 藏满了浪漫的痕迹
+[00:34.20] 而我像个呆子 挂着相机拎着一大袋礼物
+[00:38.60] 只想把这心动 一帧一帧存进内存里
+[00:43.60] 你是我心里永远 最闪耀的那个“小白”
+[00:48.30] 我是永远陪着你 逗你笑的“小鸡毛”
+[00:52.60] 一千三百四十天 每天都是热恋的步调
+[00:57.00] 你不知道你发光的样子 究竟有多么的好
+[01:03.00] 别再偷偷没自信啦 我的女孩
+[01:06.80] 你已经把全宇宙的可爱 都统统承包
+[01:14.20] 回忆那次考完试 剧情走向实在太搞笑
+[01:18.50] 你想给我惊喜 偷偷在地铁站门口守着通道
+[01:22.50] 我也想给你惊喜 故意发消息说“哎呀还没到”
+[01:26.50] 结果我一顿操作 直接奔向了酒店的转角
+[01:30.80] 你问我怎么不在 我问你跑去了哪条街道
+[01:34.80] 我们在两个坐标 玩着双向奔赴的捉迷藏
+[01:39.20] 就算完美错过 也是只有我们懂的甜度频道
+[01:43.50] 你总是把我照顾得 无微不至刚刚好
+[01:47.80] 而我也想做你 遮风挡雨的外套
+[01:52.00] 就算未来偶尔会有 想要退缩的烦恼
+[01:56.20] 别怕 把你的那些小自卑 通通都上交
+[02:04.50] 你是我心里永远 最闪耀的那个“小白”
+[02:08.80] 我是永远陪着你 逗你笑的“小鸡毛”
+[02:13.20] 一千三百四十天 每天都是热恋的步调
+[02:17.50] 你不知道你发光的样子 究竟有多么的好
+[02:22.50] 别再偷偷没自信啦 我的女孩
+[02:26.60] 你在我心里的C位 永远替换不掉
+[02:32.00] 三年多 只是个美好的起跑
+[02:35.80] 牵着线条小狗 我们接着闹
+[02:39.80] 小白和小鸡毛 永远刚刚好
+  `.trim();
+  const FINAL_LYRICS = parseLrc(FINAL_LRC);
 
   const chapters = window.MEMORY_CHAPTERS || [];
   const memories = window.MEMORIES || [];
@@ -409,6 +411,47 @@
     }
   }
 
+  function parseLrc(lrc) {
+    return lrc
+      .split(/\r?\n/)
+      .map((line) => {
+        const match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2})\]\s*(.*)$/);
+        if (!match) return null;
+
+        const minutes = Number(match[1]);
+        const seconds = Number(match[2]);
+        const hundredths = Number(match[3]);
+
+        return {
+          time: minutes * 60 + seconds + hundredths / 100,
+          text: match[4].trim()
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.time - b.time);
+  }
+
+  function getActiveLyricIndex(currentTime) {
+    if (!FINAL_LYRICS.length) return -1;
+
+    const targetTime = currentTime + LYRIC_SYNC_OFFSET;
+    let low = 0;
+    let high = FINAL_LYRICS.length - 1;
+    let active = 0;
+
+    while (low <= high) {
+      const middle = Math.floor((low + high) / 2);
+      if (FINAL_LYRICS[middle].time <= targetTime) {
+        active = middle;
+        low = middle + 1;
+      } else {
+        high = middle - 1;
+      }
+    }
+
+    return active;
+  }
+
   function renderFinalLyrics() {
     els.lyricsList.innerHTML = FINAL_LYRICS
       .map((line, index) => `
@@ -468,14 +511,18 @@
   }
 
   function updateFinalPlayer() {
-    const duration = Number.isFinite(els.finalSongPlayer.duration) ? els.finalSongPlayer.duration : FINAL_LYRICS.length * 5.4;
+    const lastLyric = FINAL_LYRICS[FINAL_LYRICS.length - 1];
+    const fallbackDuration = lastLyric ? lastLyric.time + 5 : 180;
+    const duration = Number.isFinite(els.finalSongPlayer.duration) ? els.finalSongPlayer.duration : fallbackDuration;
     const current = els.finalSongPlayer.currentTime || 0;
     const progress = duration ? Math.min(1, current / duration) : 0;
     els.finalSongProgress.style.width = `${progress * 100}%`;
     els.finalSongTime.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
 
-    const lyricIndex = Math.min(FINAL_LYRICS.length - 1, Math.floor(progress * FINAL_LYRICS.length));
-    setActiveLyric(lyricIndex);
+    const lyricIndex = getActiveLyricIndex(current);
+    if (lyricIndex >= 0) {
+      setActiveLyric(lyricIndex);
+    }
   }
 
   function setActiveLyric(index) {
