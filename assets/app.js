@@ -107,6 +107,7 @@
       "finalSongPlayer",
       "finalPlayButton",
       "finalSongProgress",
+      "finalSongSeek",
       "finalSongTime",
       "lyricsList",
       "againButton",
@@ -149,6 +150,7 @@
       els.finalScreen.classList.remove("is-visible");
       els.finalScreen.setAttribute("aria-hidden", "true");
       document.body.classList.remove("final-open");
+      document.documentElement.classList.remove("final-open");
       resetFlower();
       document.getElementById("memories").scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -159,6 +161,7 @@
     window.requestAnimationFrame(() => {
       els.gate.classList.add("is-open");
       document.body.classList.remove("final-open");
+      document.documentElement.classList.remove("final-open");
     });
     setTimeout(() => {
       els.gate.remove();
@@ -488,6 +491,8 @@
       }
     });
 
+    els.finalSongSeek.addEventListener("input", handleFinalSeek);
+    els.finalSongSeek.addEventListener("change", handleFinalSeek);
     els.finalSongPlayer.addEventListener("loadedmetadata", updateFinalPlayer);
     els.finalSongPlayer.addEventListener("timeupdate", updateFinalPlayer);
     els.finalSongPlayer.addEventListener("play", () => {
@@ -500,6 +505,14 @@
       els.finalPlayButton.textContent = "再听一遍";
       setActiveLyric(FINAL_LYRICS.length - 1);
     });
+  }
+
+  function handleFinalSeek(event) {
+    const duration = getFinalDuration();
+    const ratio = Number(event.currentTarget.value) / 1000;
+    const nextTime = duration * Math.min(1, Math.max(0, ratio || 0));
+    els.finalSongPlayer.currentTime = nextTime;
+    updateFinalPlayer();
   }
 
   function playFinalSong(fromStart) {
@@ -527,18 +540,24 @@
   }
 
   function updateFinalPlayer() {
-    const lastLyric = FINAL_LYRICS[FINAL_LYRICS.length - 1];
-    const fallbackDuration = lastLyric ? lastLyric.time + 5 : 180;
-    const duration = Number.isFinite(els.finalSongPlayer.duration) ? els.finalSongPlayer.duration : fallbackDuration;
+    const duration = getFinalDuration();
     const current = els.finalSongPlayer.currentTime || 0;
     const progress = duration ? Math.min(1, current / duration) : 0;
     els.finalSongProgress.style.width = `${progress * 100}%`;
+    els.finalSongSeek.value = String(Math.round(progress * 1000));
+    els.finalSongSeek.style.setProperty("--progress", `${progress * 100}%`);
     els.finalSongTime.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
 
     const lyricIndex = getActiveLyricIndex(current);
     if (lyricIndex >= 0) {
       setActiveLyric(lyricIndex);
     }
+  }
+
+  function getFinalDuration() {
+    const lastLyric = FINAL_LYRICS[FINAL_LYRICS.length - 1];
+    const fallbackDuration = lastLyric ? lastLyric.time + 5 : 180;
+    return Number.isFinite(els.finalSongPlayer.duration) ? els.finalSongPlayer.duration : fallbackDuration;
   }
 
   function setActiveLyric(index) {
@@ -568,6 +587,25 @@
     let offsetX = 0;
     let offsetY = 0;
 
+    const isAtFinalEdge = (event) => {
+      const rect = flower.getBoundingClientRect();
+      const threshold = Math.max(54, Math.min(112, window.innerWidth * 0.22));
+      return event.clientX >= window.innerWidth - threshold || rect.right >= window.innerWidth - threshold;
+    };
+
+    const endDrag = (event) => {
+      if (!dragging) return;
+      const shouldTrigger = event ? isAtFinalEdge(event) : false;
+      dragging = false;
+      flower.classList.remove("is-dragging");
+      if (event && flower.hasPointerCapture && flower.hasPointerCapture(event.pointerId)) {
+        flower.releasePointerCapture(event.pointerId);
+      }
+      if (shouldTrigger) {
+        triggerFinal();
+      }
+    };
+
     flower.addEventListener("pointerdown", (event) => {
       const rect = flower.getBoundingClientRect();
       dragging = true;
@@ -587,17 +625,13 @@
       const nextTop = event.clientY - offsetY;
       flower.style.left = `${nextLeft}px`;
       flower.style.top = `${nextTop}px`;
-      if (event.clientX > window.innerWidth - 82) {
-        dragging = false;
-        flower.classList.remove("is-dragging");
-        triggerFinal();
+      if (isAtFinalEdge(event)) {
+        endDrag(event);
       }
     });
 
-    flower.addEventListener("pointerup", () => {
-      dragging = false;
-      flower.classList.remove("is-dragging");
-    });
+    flower.addEventListener("pointerup", endDrag);
+    flower.addEventListener("pointercancel", endDrag);
 
     flower.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -613,6 +647,7 @@
     els.finalScreen.classList.add("is-visible");
     els.finalScreen.setAttribute("aria-hidden", "false");
     document.body.classList.add("final-open");
+    document.documentElement.classList.add("final-open");
     playFinalSong(true);
     burstHearts();
   }
